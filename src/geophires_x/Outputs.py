@@ -131,6 +131,8 @@ class Outputs:
 
                 if model.surfaceplant.plant_type.value == PlantType.ABSORPTION_CHILLER:
                     f.write(f"      Average Cooling Production:                       {np.average(model.surfaceplant.cooling_produced.value):10.2f} " + model.surfaceplant.cooling_produced.CurrentUnits.value + NL)
+                    f.write(f"      Annual District Cooling Demand:                   {np.average(model.surfaceplant.annual_cooling_demand.value):10.2f} " + model.surfaceplant.annual_cooling_demand.CurrentUnits.value + NL)
+                    # f.write(f"      Average Annual Geothermal Cooling Production:        {sum(model.surfaceplant.dc_geothermal_cooling.value * 24) / model.surfaceplant.plant_lifetime.value / 1e3:10.2f} " + model.surfaceplant.annual_cooling_demand.CurrentUnits.value + NL)
 
                 if model.surfaceplant.enduse_option.value in [EndUseOptions.ELECTRICITY, EndUseOptions.COGENERATION_TOPPING_EXTRA_HEAT, EndUseOptions.COGENERATION_BOTTOMING_EXTRA_HEAT, EndUseOptions.COGENERATION_PARALLEL_EXTRA_HEAT]:    #levelized cost expressed as LCOE
                     f.write(f"      Electricity breakeven price:                      {model.economics.LCOE.value:10.2f} " + model.economics.LCOE.CurrentUnits.value + NL)
@@ -588,4 +590,23 @@ class Outputs:
         plt.ylim([0, max(model.surfaceplant.daily_heating_demand.value) * 1.05])
         plt.legend()
         plt.title('Geothermal district heating system with peaking boilers')
+        plt.show(block=False)
+    
+    def MakeDistrictCoolingPlot(self, model: Model):
+        """
+        Make a plot of the district cooling system
+        :param model: GEOPHIRES model
+        :type model: :class:`~geophires_x.Model.Model`
+        :return: None
+        """
+        plt.close('all')
+        year_day = np.arange(1, 366, 1)  # make an array of days for plot x-axis
+        plt.plot(year_day, model.surfaceplant.daily_cooling_demand.value, label='District Cooling Demand')
+        plt.fill_between(year_day, 0, model.surfaceplant.dh_geothermal_cooling.value[0:365] * 24, color="g", alpha=0.5, label='Geothermal Cooling Supply')
+        plt.fill_between(year_day, model.surfaceplant.dh_geothermal_cooling.value[0:365] * 24, model.surfaceplant.daily_cooling_demand.value, color="r", alpha=0.5, label='Supplemental Supply')
+        plt.xlabel('Ordinal Day')
+        plt.ylabel('Cooling Demand/Supply [MWh/day]')
+        plt.ylim([0, max(model.surfaceplant.daily_cooling_demand.value) * 1.05])
+        plt.legend()
+        plt.title('Geothermal district cooling system with peaking units')
         plt.show(block=False)
