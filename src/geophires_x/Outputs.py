@@ -128,7 +128,7 @@ class Outputs:
                     f.write(f"      Average Net Electricity Production:               {np.average(model.surfaceplant.NetElectricityProduced.value):10.2f} " + model.surfaceplant.NetElectricityProduced.CurrentUnits.value + NL)
                 if model.surfaceplant.enduse_option.value != EndUseOptions.ELECTRICITY:    # there is a direct-use component
                     f.write(f"      Average Direct-Use Heat Production:               {np.average(model.surfaceplant.HeatProduced.value):10.2f} "+ model.surfaceplant.HeatProduced.CurrentUnits.value + NL)
-
+                # EDITED
                 if model.surfaceplant.plant_type.value == PlantType.ABSORPTION_CHILLER:
                     f.write(f"      Average Cooling Production:                       {np.average(model.surfaceplant.cooling_produced.value):10.2f} " + model.surfaceplant.cooling_produced.CurrentUnits.value + NL)
                     f.write(f"      Annual District Cooling Demand:                   {np.average(model.surfaceplant.annual_cooling_demand.value):10.2f} " + model.surfaceplant.annual_cooling_demand.CurrentUnits.value + NL)

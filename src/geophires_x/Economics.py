@@ -835,6 +835,138 @@ class Economics:
             Valid=False,
             ToolTipText="Absorption chiller O&M cost"
         )
+        #EDIT 2-29-2024
+        self.dcpipingcostrate = self.ParameterDict[self.dcpipingcostrate.Name] = floatParameter(
+            "District cooling Piping Cost Rate",
+            value=1200,
+            DefaultValue=1200,
+            Min=0,
+            Max=10000,
+            UnitType=Units.COSTPERDISTANCE,
+            PreferredUnits=CostPerDistanceUnit.DOLLARSPERM,
+            CurrentUnits=CostPerDistanceUnit.DOLLARSPERM,
+            Provided=False,
+            Valid=False,
+            ErrMessage="assume default district cooling piping cost rate ($1,200/m)",
+            ToolTipText="District cooling piping cost rate ($/m)"
+        )
+        self.dctotaldistrictnetworkcost = self.ParameterDict[self.dctotaldistrictnetworkcost.Name] = floatParameter(
+            "Total District cooling Network Cost",
+            value=10,
+            DefaultValue=10,
+            Min=0,
+            Max=1000,
+            UnitType=Units.CURRENCY,
+            PreferredUnits=CurrencyUnit.MDOLLARS,
+            CurrentUnits=CurrencyUnit.MDOLLARS,
+            Provided=False,
+            Valid=False,
+            ErrMessage="assume default district cooling network cost ($10M)",
+            ToolTipText="Total district cooling network cost ($M)"
+        )
+        self.dcoandmcost = self.ParameterDict[self.dcoandmcost.Name] = floatParameter(
+            "District cooling O&M Cost",
+            value=1,
+            DefaultValue=1,
+            Min=0,
+            Max=100,
+            UnitType=Units.CURRENCYFREQUENCY,
+            PreferredUnits=CurrencyFrequencyUnit.MDOLLARSPERYEAR,
+            CurrentUnits=CurrencyFrequencyUnit.MDOLLARSPERYEAR,
+            Provided=False, Valid=False,
+            ToolTipText="Total annual district cooling O&M cost ($M/year)"
+        )
+        self.dcpipinglength = self.ParameterDict[self.dcpipinglength.Name] = floatParameter(
+            "District cooling Network Piping Length",
+            value=10.0,
+            DefaultValue=10.0,
+            Min=0,
+            Max=1000,
+            UnitType=Units.LENGTH,
+            PreferredUnits=LengthUnit.KILOMETERS,
+            CurrentUnits=LengthUnit.KILOMETERS,
+            ErrMessage="assume default district cooling network piping length (10 km)",
+            ToolTipText="District cooling network piping length (km)"
+        )
+        self.dcroadlength = self.ParameterDict[self.dcroadlength.Name] = floatParameter(
+            "District cooling Road Length",
+            value=10.0,
+            DefaultValue=10.0,
+            Min=0,
+            Max=1000,
+            UnitType=Units.LENGTH,
+            PreferredUnits=LengthUnit.KILOMETERS,
+            CurrentUnits=LengthUnit.KILOMETERS,
+            ErrMessage="assume default district cooling road length (10 km)",
+            ToolTipText="District cooling road length (km)"
+        )
+        self.dclandarea = self.ParameterDict[self.dclandarea.Name] = floatParameter(
+            "District cooling Land Area",
+            value=10.0,
+            DefaultValue=10.0,
+            Min=0,
+            Max=1000,
+            UnitType=Units.AREA,
+            PreferredUnits=AreaUnit.KILOMETERS2,
+            CurrentUnits=AreaUnit.KILOMETERS2,
+            ErrMessage="assume default district cooling land area (10 km2)",
+            ToolTipText="District cooling land area (km2)"
+        )
+        self.dcpopulation = self.ParameterDict[self.dcpopulation.Name] = floatParameter(
+            "District cooling Population",
+            value=200,
+            DefaultValue=200,
+            Min=0,
+            Max=1000000,
+            UnitType=Units.NONE,
+            ErrMessage="assume default population (200)",
+            ToolTipText="Specify the population in the district cooling network"
+        )
+
+        self.CoolStartPrice = self.ParameterDict[self.CoolStartPrice.Name] = floatParameter(
+            "Starting cool Sale Price",
+            value=0.025,
+            DefaultValue=0.025,
+            Min=0,
+            Max=100,
+            UnitType=Units.ENERGYCOST,
+            PreferredUnits=EnergyCostUnit.DOLLARSPERKWH,
+            CurrentUnits=EnergyCostUnit.DOLLARSPERKWH
+        )
+        self.CoolEndPrice = self.ParameterDict[self.CoolEndPrice.Name] = floatParameter(
+            "Ending cool Sale Price",
+            value=0.025,
+            DefaultValue=0.025,
+            Min=0,
+            Max=100,
+            UnitType=Units.ENERGYCOST,
+            PreferredUnits=EnergyCostUnit.DOLLARSPERKWH,
+            CurrentUnits=EnergyCostUnit.DOLLARSPERKWH
+        )
+        self.CoolEscalationStart = self.ParameterDict[self.CoolEscalationStart.Name] = intParameter(
+            "Cool Escalation Start Year",
+            value=5,
+            DefaultValue=5,
+            AllowableRange=list(range(0, 101, 1)),
+            UnitType=Units.TIME,
+            PreferredUnits=TimeUnit.YEAR,
+            CurrentUnits=TimeUnit.YEAR,
+            ErrMessage="assume default cool escalation delay time (5 years)",
+            ToolTipText="Number of years after start of project before start of escalation"
+        )
+        self.coolEscalationRate = self.ParameterDict[self.coolEscalationRate.Name] = floatParameter(
+            "Cool Escalation Rate Per Year",
+            value=0.0,
+            DefaultValue=0.0,
+            Min=0.0,
+            Max=100.0,
+            UnitType=Units.ENERGYCOST,
+            PreferredUnits=EnergyCostUnit.DOLLARSPERKWH,
+            CurrentUnits=EnergyCostUnit.DOLLARSPERKWH,
+            ErrMessage="assume no cool price escalation (0.0)",
+            ToolTipText="additional cost per year of price after escalation starts"
+        )
+        # END EDIT 2-29-2024
 
         # heat pump
         self.heatpumpcapex = self.ParameterDict[self.heatpumpcapex.Name] = floatParameter(

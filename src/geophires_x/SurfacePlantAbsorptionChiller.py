@@ -50,9 +50,9 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         )
         self.dc_demand_filename = self.ParameterDict[self.dc_demand_filename.Name] = strParameter(
             "District Cooling Demand File Name",
-            value='coolDemand.csv',
+            value='CoolDemand.csv',
             UnitType=Units.NONE,
-            ErrMessage="assume default district cooling demand filename (coolDemand.csv)",
+            ErrMessage="assume default district cooling demand filename (CoolDemand.csv)",
             ToolTipText="Provide district cooling demand in csv file in MW or MWh per day (if district cooling demand option is set to 1)"
         )
         self.dc_demand_time_resolution = self.ParameterDict[self.dc_demand_time_resolution.Name] = intParameter(
@@ -163,19 +163,19 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         )
         self.max_peaking_boiler_demand = self.OutputParameterDict[
             self.max_peaking_boiler_demand.Name] = OutputParameter(
-            Name="Maximum Peaking Boiler Natural Gas Demand",
+            Name="Maximum Supplemental Peaking Source Demand",
             UnitType=Units.POWER,
             PreferredUnits=PowerUnit.MW,
             CurrentUnits=PowerUnit.MW
         )
         self.dc_geothermal_cooling = self.OutputParameterDict[self.dc_geothermal_cooling.Name] = OutputParameter(
-            Name="Instantaneous Geothermal cooling Over Lifetime",
+            Name="Instantaneous Geothermal Cooling Over Lifetime",
             UnitType=Units.POWER,
             PreferredUnits=PowerUnit.MW,
             CurrentUnits=PowerUnit.MW
         )
         self.dc_natural_gas_cooling = self.OutputParameterDict[self.dc_natural_gas_cooling.Name] = OutputParameter(
-            Name="Instantaneous Natural Gas cooling Over Lifetime",
+            Name="Instantaneous Natural Gas Cooling Over Lifetime",
             UnitType=Units.POWER,
             PreferredUnits=PowerUnit.MW,
             CurrentUnits=PowerUnit.MW
