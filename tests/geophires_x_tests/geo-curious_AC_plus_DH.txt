@@ -1,0 +1,74 @@
+***Subsurface technical parameters***
+*************************************
+Reservoir Model,4,						---Linear Thermal Drawdown
+Drawdown Parameter,.01,						---[%]
+Reservoir Depth,1.5,						---[km]
+Number of Segments,1,						---[-]
+Gradient 1,90,							---[deg.C/km]
+Maximum Temperature,400,					---[deg.C]
+Number of Production Wells,2,					---[-]
+Number of Injection Wells,2,					---[-]
+Production Well Diameter,8.5,					---[inch]
+Injection Well Diameter,8.5,					---[inch]
+Ramey Production Wellbore Model,0,				---Should be 0 (disabled) or 1 (enabled)
+Production Wellbore Temperature Drop,5,				---[deg.C]
+Injection Wellbore Temperature Gain,3,				---[deg.C]
+Production Flow Rate per Well,30,				---[kg/s]
+Reservoir Volume Option,4,					---Should be 1,2,3 or 4. See manual for details.
+Reservoir Volume, 125000000, 					---[m3]
+Injectivity Index,5,						---[kg/s/bar]
+Injection Temperature,80,					---[deg.C]
+Maximum Drawdown,1,						---[-] no redrilling considered
+Reservoir Heat Capacity,1000,					---[J/kg/K]
+Reservoir Density,2700,						---[kg/m3]
+Reservoir Thermal Conductivity,3,				---[W/m/K]
+Water Loss Fraction,0.02,					---[-]
+
+***Surface Technical Parameters***
+**********************************
+End-Use Option,2, --- Direct use
+Power Plant Type, 5,						---[-] Absorption Chiller
+Circulation Pump Efficiency,.80,				---[-]
+Utilization Factor,.6,						---[-]
+End-Use Efficiency Factor,.9,					---[-]
+Surface Temperature,30,						---[deg.C]
+Ambient Temperature,25,						---[deg.C]
+Absorption Chiller COP, 0.72,            			--- [-]
+
+District Heating Demand Option,1,				--- Should be 1 or 2. See manual or below for option details
+District Heating Demand File Name,edc.csv,			--- hourly MW thermal demand in a CSV file
+District Heating Demand Data Time Resolution,1,			--- 1 for hourly, 2 for daily
+District Heating Demand Data Column Number,2,			---
+
+District Heating Piping Cost Rate,1200,				--- [$/m] used for calculating surface piping capital cost for district heat
+District Heating Road Length,3, 				---[km] supersedes model option 2 if any value is entered
+
+***Financial Parameters***
+**************************
+
+Plant Lifetime,30,						---[years]
+Economic Model,2,						---BICYCLE Levelized Cost Model
+Discount Rate, 0.089,						--- [-] Required if Standard LCOE/LCOH model is selected. See manual for details.
+Inflation Rate During Construction,0.06,			---[-]
+
+***Capital and O&M Cost Parameters***
+*************************************
+
+Well Drilling and Completion Capital Cost Adjustment Factor,1, 	---[-] use built in correlations
+Well Drilling Cost Correlation,1,				---[-] use built in correlations
+Reservoir Stimulation Capital Cost Adjustment Factor,1,		---[-] use built in correlations
+Surface Plant Capital Cost Adjustment Factor,1,			---[-] use built in correlations
+Field Gathering System Capital Cost Adjustment Factor,1,	---[-] use built in correlations
+Exploration Capital Cost Adjustment Factor,1,			---[-] use built in correlations
+Wellfield O&M Cost Adjustment Factor,1,				---[-] use built in correlations
+Surface Plant O&M Cost Adjustment Factor,1,			---[-] use built in correlations
+Water Cost Adjustment Factor,1,					---[-] use built in correlations
+Electricity Rate,.07,							---[$/kWh]
+Absorption Chiller Capital Cost,3.74,               --- [$M]
+Absorption Chiller O&M Cost,0.065,               --- [$M/year]
+
+***Simulation Parameters***
+***************************
+
+Print Output to Console,1,					---Should be 1 (to print) or 0 (to not print)
+Time steps per year,10,						---[-]
