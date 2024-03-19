@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import pdb
 
 from .Parameter import floatParameter, intParameter, strParameter, OutputParameter
 from .SurfacePlant import SurfacePlant
@@ -50,7 +51,8 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         )
         self.dc_demand_filename = self.ParameterDict[self.dc_demand_filename.Name] = strParameter(
             "District Cooling Demand File Name",
-            value='CoolDemand.csv',
+            # value='CoolDemand.csv',
+            DefaultValue='CoolDemand.csv',
             UnitType=Units.NONE,
             ErrMessage="assume default district cooling demand filename (CoolDemand.csv)",
             ToolTipText="Provide district cooling demand in csv file in MW or MWh per day (if district cooling demand option is set to 1)"
@@ -155,15 +157,15 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
             Name="Utilisation Factor Array",
             UnitType=Units.NONE
         )
-        self.annual_ng_demand = self.OutputParameterDict[self.annual_ng_demand.Name] = OutputParameter(
-            Name="Annual Peaking Boiler Natural Gas Demand",
+        self.annual_auxiliary_demand = self.OutputParameterDict[self.annual_auxiliary_demand.Name] = OutputParameter(
+            Name="Annual Peaking Auxiliary Demand",
             UnitType=Units.ENERGYFREQUENCY,
             PreferredUnits=EnergyFrequencyUnit.MWhPERYEAR,
             CurrentUnits=EnergyFrequencyUnit.MWhPERYEAR
         )
-        self.max_peaking_boiler_demand = self.OutputParameterDict[
-            self.max_peaking_boiler_demand.Name] = OutputParameter(
-            Name="Maximum Supplemental Peaking Source Demand",
+        self.max_peaking_auxiliary_demand = self.OutputParameterDict[
+            self.max_peaking_auxiliary_demand.Name] = OutputParameter(
+            Name="Maximum Auxiliary Peaking Source Demand",
             UnitType=Units.POWER,
             PreferredUnits=PowerUnit.MW,
             CurrentUnits=PowerUnit.MW
@@ -174,8 +176,8 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
             PreferredUnits=PowerUnit.MW,
             CurrentUnits=PowerUnit.MW
         )
-        self.dc_natural_gas_cooling = self.OutputParameterDict[self.dc_natural_gas_cooling.Name] = OutputParameter(
-            Name="Instantaneous Natural Gas Cooling Over Lifetime",
+        self.dc_auxiliary_cooling = self.OutputParameterDict[self.dc_auxiliary_cooling.Name] = OutputParameter(
+            Name="Instantaneous Auxiliary Cooling Over Lifetime",
             UnitType=Units.POWER,
             PreferredUnits=PowerUnit.MW,
             CurrentUnits=PowerUnit.MW
@@ -237,16 +239,18 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         # calculate produced electricity/direct-use heat
         # absorption chiller: we don't consider end-use efficiency factor here.
         # All extracted heat will go to absorption chiller and there is the end-use efficiency factor. [MWth]
+        self.CalculateDCDemand(model)
+
         self.HeatExtracted.value = model.wellbores.nprod.value * model.wellbores.prodwellflowrate.value * model.reserv.cpwater.value * (
             model.wellbores.ProducedTemperature.value - model.wellbores.Tinj.value) / 1E6  # heat extracted from geofluid [MWth]
         self.HeatProduced.value = self.HeatExtracted.value
 
         self.cooling_produced.value = self.HeatProduced.value * self.absorption_chiller_cop.value * self.enduse_efficiency_factor.value  # MW
-
+        print(self.cooling_produced.value)
         # # EDIT 2-29-2024
-        # [self.util_factor_array.value, self.utilization_factor.value, self.annual_ng_demand.value,
-        #  self.max_peaking_boiler_demand.value, self.dc_geothermal_cooling.value,
-        #  self.dc_natural_gas_cooling.value] = self.calc_util_factor(self.HeatProduced.value, model.economics.timestepsperyear.value)
+        [self.util_factor_array.value, self.utilization_factor.value, self.annual_auxiliary_demand.value,
+        self.max_peaking_auxiliary_demand.value, self.dc_geothermal_cooling.value,
+        self.dc_auxiliary_cooling.value] = self.calc_util_factor(self.HeatProduced.value, model.economics.timestepsperyear.value)
         self.annual_cooling_demand.value = np.sum(self.daily_cooling_demand.value) / 1000  # GWh/year
         # END OF EDIT 2-29-2024
 
@@ -254,17 +258,17 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         # Calculate annual electricity/heat production
         # all end-use options have "heat extracted from reservoir" and pumping kWs
         self.HeatkWhExtracted.value = np.zeros(self.plant_lifetime.value)
-        self.PumpingkWh.value = np.zeros(self.plant_lifetime.value)
+        # self.PumpingkWh.value = np.zeros(self.plant_lifetime.value)
 
         for i in range(0, self.plant_lifetime.value):
             self.HeatkWhExtracted.value[i] = np.trapz(self.HeatExtracted.value[
                                             (0 + i * model.economics.timestepsperyear.value):((
                                             i + 1) * model.economics.timestepsperyear.value) + 1],
                                             dx=1. / model.economics.timestepsperyear.value * 365. * 24.) * 1000. * self.utilization_factor.value
-            self.PumpingkWh.value[i] = np.trapz(model.wellbores.PumpingPower.value[
-                                                (0 + i * model.economics.timestepsperyear.value):((
-                                                i + 1) * model.economics.timestepsperyear.value) + 1],
-                                                dx=1. / model.economics.timestepsperyear.value * 365. * 24.) * 1000. * self.utilization_factor.value
+            # self.PumpingkWh.value[i] = np.trapz(model.wellbores.PumpingPower.value[
+            #                                     (0 + i * model.economics.timestepsperyear.value):((
+            #                                     i + 1) * model.economics.timestepsperyear.value) + 1],
+            #                                     dx=1. / model.economics.timestepsperyear.value * 365. * 24.) * 1000. * self.utilization_factor.value
 
         self.HeatkWhProduced.value = np.zeros(self.plant_lifetime.value)
         for i in range(0, self.plant_lifetime.value):
@@ -306,7 +310,6 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
                 # if time interval is 1 hour, also store hourly cooling demand
                 self.hourly_cooling_demand.value = self.read_csv(self.dc_demand_filename.value,
                                                                  self.dc_demand_data_column_number.value)
-
         elif self.dc_demand_option.value == 2:  # calculate thermal demand from TMY and HDD
             self.daily_cooling_demand.value = self.calculate_dc_demand(self.dc_number_of_housing_units.value,
                                                                        self.dc_us_census_division.value,
@@ -435,7 +438,7 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
     def calc_util_factor(self, cool_produced, time_steps_per_year):
         util_factor_array = np.zeros(self.plant_lifetime.value)  # [-]
         annual_ng_demand = np.zeros(self.plant_lifetime.value)  # MWh per year
-        instantaneous_peaking_boiler_demand = np.zeros(self.plant_lifetime.value * 365)
+        instantaneous_peaking_auxiliary_demand = np.zeros(self.plant_lifetime.value * 365)
         actual_geothermal_used = np.zeros(self.plant_lifetime.value * 365)
         current_cool_output_stored = np.zeros(self.plant_lifetime.value * 365)
 
@@ -452,19 +455,19 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
                 current_cool_output_stored[current_index] = current_cool_output
                 if self.daily_cooling_demand.value[j] / 24 > current_cool_output:
                     actual_geothermal_used[current_index] = current_cool_output
-                    instantaneous_peaking_boiler_demand[current_index] = self.daily_cooling_demand.value[j] / 24 - current_cool_output
+                    instantaneous_peaking_auxiliary_demand[current_index] = self.daily_cooling_demand.value[j] / 24 - current_cool_output
                 else:
                     actual_geothermal_used[current_index] = self.daily_cooling_demand.value[j] / 24
-            annual_ng_demand[i] = np.sum(instantaneous_peaking_boiler_demand[i * 365:(i + 1) * 365]) * 24  # MWh/year
+            annual_ng_demand[i] = np.sum(instantaneous_peaking_auxiliary_demand[i * 365:(i + 1) * 365]) * 24  # MWh/year
             util_factor_array[i] = np.sum(actual_geothermal_used[i * 365:(i + 1) * 365]) / np.sum(current_cool_output_stored[i * 365:(i + 1) * 365])
 
         util_factor = np.sum(actual_geothermal_used) / np.sum(current_cool_output_stored)
-        if np.max(instantaneous_peaking_boiler_demand) > 0:
+        if np.max(instantaneous_peaking_auxiliary_demand) > 0:
             # max instantaneous peaking boiler demand in MW
             # assuming it must meet peak demand day running for 20 hours in that day
-            max_peaking_boiler_demand = np.max(instantaneous_peaking_boiler_demand) / 20 * 24
+            max_peaking_auxiliary_demand = np.max(instantaneous_peaking_auxiliary_demand) / 20 * 24
         else:
-            max_peaking_boiler_demand = 0
+            max_peaking_auxiliary_demand = 0
 
-        return [util_factor_array, util_factor, annual_ng_demand, max_peaking_boiler_demand, actual_geothermal_used, instantaneous_peaking_boiler_demand]
+        return [util_factor_array, util_factor, annual_ng_demand, max_peaking_auxiliary_demand, actual_geothermal_used, instantaneous_peaking_auxiliary_demand]
         #EDIT END HERE 2-29-2024

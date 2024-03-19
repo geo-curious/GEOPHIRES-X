@@ -36,7 +36,7 @@ Ambient Temperature,25,						---[deg.C]
 Absorption Chiller COP, 0.72,            			--- [-]
 
 District Heating Demand Option,1,				--- Should be 1 or 2. See manual or below for option details
-District Heating Demand File Name,edc.csv,			--- hourly MW thermal demand in a CSV file
+District Heating Demand File Name, edc.csv,			--- hourly MW thermal demand in a CSV file
 District Heating Demand Data Time Resolution,1,			--- 1 for hourly, 2 for daily
 District Heating Demand Data Column Number,2,			---
 
