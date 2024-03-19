@@ -51,7 +51,10 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         )
         self.dc_demand_filename = self.ParameterDict[self.dc_demand_filename.Name] = strParameter(
             "District Cooling Demand File Name",
+<<<<<<< HEAD
             # value='CoolDemand.csv',
+=======
+>>>>>>> 81cd22732ac26126fa8b96563adf1a7e09db17f9
             DefaultValue='CoolDemand.csv',
             UnitType=Units.NONE,
             ErrMessage="assume default district cooling demand filename (CoolDemand.csv)",
@@ -183,7 +186,7 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
             CurrentUnits=PowerUnit.MW
         )
         model.logger.info(f"Complete {self.__class__.__name__}: {__name__}")
-        #END EDIT 2-29-2024 
+        #END EDIT 2-29-2024
 
         self.cooling_produced = self.OutputParameterDict[self.cooling_produced.Name] = OutputParameter(
             Name="Cooling Produced",
@@ -239,6 +242,10 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         # calculate produced electricity/direct-use heat
         # absorption chiller: we don't consider end-use efficiency factor here.
         # All extracted heat will go to absorption chiller and there is the end-use efficiency factor. [MWth]
+<<<<<<< HEAD
+=======
+
+>>>>>>> 81cd22732ac26126fa8b96563adf1a7e09db17f9
         self.CalculateDCDemand(model)
 
         self.HeatExtracted.value = model.wellbores.nprod.value * model.wellbores.prodwellflowrate.value * model.reserv.cpwater.value * (
@@ -287,8 +294,9 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
         # calculate reservoir heat content
         self.RemainingReservoirHeatContent.value = SurfacePlant.remaining_reservoir_heat_content(
             self, model.reserv.InitialReservoirHeatContent.value, self.HeatkWhExtracted.value)
+
         model.logger.info(f"complete {self.__class__.__name__}: {__name__}")
-            
+
     #EDITED FROM HERE 2-29-2024
     # district cooling routines below
     def CalculateDCDemand(self, model: Model) -> None:
@@ -428,7 +436,7 @@ class SurfacePlantAbsorptionChiller(SurfacePlant):
                 T_sum += hourly_temp[year_hour]  # sum the temperatures within a single day
                 year_hour += 1  # advance the indexing variable
             T_mean[day] = T_sum / 24  # calculate the mean temp for the day
-            if T_mean[day] > 18.3:  # check whether cooling was required for day; if T_mean[day] < 18.3: 
+            if T_mean[day] > 18.3:  # check whether cooling was required for day; if T_mean[day] < 18.3:
                 CDD = np.append(CDD, 18.3 + T_mean[day])  # calculate CDD if cooling was required; HDD = np.append(HDD, 18.3 - T_mean[day])
             else:
                 CDD = np.append(CDD, 0)  # record a 0 if no cooling was required

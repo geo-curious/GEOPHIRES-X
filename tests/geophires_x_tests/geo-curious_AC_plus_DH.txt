@@ -40,8 +40,8 @@ District Heating Demand File Name, edc.csv,			--- hourly MW thermal demand in a 
 District Heating Demand Data Time Resolution,1,			--- 1 for hourly, 2 for daily
 District Heating Demand Data Column Number,2,			---
 
-District Heating Piping Cost Rate,1200,				--- [$/m] used for calculating surface piping capital cost for district heat
-District Heating Road Length,3, 				---[km] supersedes model option 2 if any value is entered
+District Cooling Piping Cost Rate,1200,				--- [$/m] used for calculating surface piping capital cost for district heat
+District Cooling Road Length,3, 				---[km] supersedes model option 2 if any value is entered
 
 ***Financial Parameters***
 **************************
